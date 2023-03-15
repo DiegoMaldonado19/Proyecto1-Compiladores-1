@@ -5,10 +5,10 @@ import dmaldonado.server.model.*;
 
 parser code {:
     private ArrayList<String> errorList;
-    private ArrayList<Box> boardList;
-    private ArrayList<Box> boxesList;
-    private ArrayList<Box> targetsList;
-    private ArrayList<Box> playerPos; 
+    private ArrayList<String> boardList;
+    private ArrayList<String> boxesList;
+    private ArrayList<String> targetsList;
+    private ArrayList<String> playerPos; 
     private ArrayList<String> configList;
     private ArrayList<String> valueList;
 
@@ -37,19 +37,19 @@ parser code {:
             return s;
         }
 
-        public ArrayList<Box> getBoardList(){
+        public ArrayList<String> getBoardList(){
             return boardList;
         }
 
-        public ArrayList<Box> getBoxesList(){
+        public ArrayList<String> getBoxesList(){
             return boxesList;
         }
 
-        public ArrayList<Box> getTargetsList(){
+        public ArrayList<String> getTargetsList(){
             return targetsList;
         }
 
-        public ArrayList<Box> getPlayerPos(){
+        public ArrayList<String> getPlayerPos(){
             return playerPos;
         }
 
