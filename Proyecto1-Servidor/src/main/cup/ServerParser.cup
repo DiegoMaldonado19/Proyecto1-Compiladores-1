@@ -1,0 +1,168 @@
+package dmaldonado.server.compiler;
+import java.util.*;
+import java_cup.runtime.*;
+import dmaldonado.server.model.*;
+
+parser code {:
+    private ArrayList<String> errorList;
+    private ArrayList<Box> boardList;
+    private ArrayList<Box> boxesList;
+    private ArrayList<Box> targetsList;
+    private ArrayList<Box> playerPos; 
+    private ArrayList<String> configList;
+    private ArrayList<String> valueList;
+
+        public Parser(Lexer lex){
+            super(lex);
+            this.errorList = new ArrayList();
+            this.boardList = new ArrayList();
+            this.boxesList = new ArrayList();
+            this.targetsList = new ArrayList();
+            this.playerPos = new ArrayList();
+            this.configList = new ArrayList();
+            this.valueList = new ArrayList();
+        }
+
+        @Override
+        public void syntax_error(Symbol symbol){
+            Token token = (Token) symbol.value;
+            report_error("Se encontro un error con el token: "+token.getLexeme()+" en la linea: "+token.getLine()+" en la columna: "+token.getColumn());
+
+            System.out.println(report_error("Se encontro un error con el token: "+token.getLexeme()+" en la linea: "+token.getLine()+" en la columna: "+token.getColumn()));
+
+            errorList.add(String.format(report_error("Se encontro un error con el token: "+token.getLexeme()+" en la linea: "+token.getLine()+" en la columna: "+token.getColumn())));
+        }
+
+        private String report_error(String s) {
+            return s;
+        }
+
+        public ArrayList<Box> getBoardList(){
+            return boardList;
+        }
+
+        public ArrayList<Box> getBoxesList(){
+            return boxesList;
+        }
+
+        public ArrayList<Box> getTargetsList(){
+            return targetsList;
+        }
+
+        public ArrayList<Box> getPlayerPos(){
+            return playerPos;
+        }
+
+        public ArrayList<String> getConfigList(){
+            return configList;
+        }
+
+        public ArrayList<String> getValueList(){
+            return valueList;
+        }
+
+        public ArrayList<String> getErrorList(){
+            return errorList;
+        }
+:}
+
+terminal NAME, ROWS, COLS, CONFIG, TYPE;
+terminal BOX_COLOR, BOX_ON_TARGET_COLOR, TARGET_COLOR, BRICK_COLOR, HALL_COLOR;
+terminal UNDEFINED_COLOR, PLAYER_COLOR;
+terminal BOARD, POSX, POSY, BOXES, TARGETS, PLAYER;
+terminal FLOOR, CEIL, BRICK, HALL;
+terminal LBRACE, RBRACE, COLON, COMMA, LBRACKET, RBRACKET;
+terminal LPAREN, RPAREN, PLUS, DIV, MINUS, MULT, QUOTATION;
+terminal DIGIT, IDENTIFIER, HEXADECIMAL, DECIMAL;
+terminal ERROR;
+
+non terminal map;
+non terminal element;
+non terminal object;
+non terminal pair_list;
+non terminal pair;
+non terminal array;
+non terminal value;
+non terminal expr;
+non terminal term;
+non terminal factor;
+non terminal reserved_words;
+non terminal op;
+non terminal array_list;
+
+precedence left PLUS, MINUS;
+precedence left DIV, MULT;
+precedence left FLOOR, CEIL;
+precedence nonassoc LPAREN, RPAREN;
+
+start with map;
+
+map ::= LBRACE element RBRACE                           {: :}
+    ;
+
+element ::= pair_list                                   {: :}
+        | object                                        {: :}
+        | array                                         {: :}
+        ;
+
+object ::= CONFIG COLON LBRACE pair_list RBRACE         {: clavesList.add( new Manejador(e.getLexeme(), 1)); :}
+        | PLAYER COLON LBRACE pair_list RBRACE          {: :}
+        ;
+
+pair_list ::= pair                                      {: :}
+           | pair COMMA pair_list                       {: :}
+            ;
+
+pair ::= reserved_words COLON value                     {: :}
+       ;
+
+array ::= BOARD COLON LBRACKET array_list RBRACKET       {: :}
+        | BOXES COLON LBRACKET array_list RBRACKET       {: :}
+        | TARGETS COLON LBRACKET array_list RBRACKET     {: :}
+        ;
+
+array_list ::= LBRACE pair_list RBRACE                   {: :}
+            | LBRACE pair_list RBRACE COMMA array_list   {: :}
+            ;
+
+expr ::= term                                           {: :}
+        | expr PLUS term                                {: :}
+        | expr MINUS term                               {: :}
+        ;
+
+term ::= factor                                         {: :}
+        | term MULT factor                              {: :}
+        | term DIV factor                               {: :}
+        ;
+
+factor ::= DIGIT                                        {: :}
+        | op                                            {: :}
+        | DECIMAL                                       {: :}
+        | LPAREN expr RPAREN                            {: :}
+        ;
+
+op ::= FLOOR LPAREN expr RPAREN                         {: :}
+    | CEIL LPAREN expr RPAREN                           {: :}
+    ;
+
+value ::= IDENTIFIER                                    {: :}
+        | HEXADECIMAL                                   {: :}
+        | expr                                          {: :}
+        | BRICK                                         {: :}
+        | HALL                                          {: :}
+        ;
+
+reserved_words ::= NAME                                 {: :}
+                | ROWS                                  {: :}
+                | COLS                                  {: :}
+                | BRICK_COLOR                           {: :}
+                | BOX_COLOR                             {: :}
+                | BOX_ON_TARGET_COLOR                   {: :}
+                | TARGET_COLOR                          {: :}
+                | HALL_COLOR                            {: :}
+                | UNDEFINED_COLOR                       {: :}
+                | PLAYER_COLOR                          {: :}
+                | POSX                                  {: :}
+                | POSY                                  {: :}
+                | TYPE                                  {: :}
+                ;
