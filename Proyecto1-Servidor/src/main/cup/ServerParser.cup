@@ -5,22 +5,14 @@ import dmaldonado.server.model.*;
 
 parser code {:
     private ArrayList<String> errorList;
-    private ArrayList<String> boardList;
-    private ArrayList<String> boxesList;
-    private ArrayList<String> targetsList;
-    private ArrayList<String> playerPos; 
-    private ArrayList<String> configList;
-    private ArrayList<String> valueList;
+    private ArrayList<String> tokenList;
+    private HashMap<String, String> pairList;
 
         public Parser(Lexer lex){
             super(lex);
             this.errorList = new ArrayList();
-            this.boardList = new ArrayList();
-            this.boxesList = new ArrayList();
-            this.targetsList = new ArrayList();
-            this.playerPos = new ArrayList();
-            this.configList = new ArrayList();
-            this.valueList = new ArrayList();
+            this.tokenList = new ArrayList();
+            this.pairList = new HashMap<String, String>();
         }
 
         @Override
@@ -37,32 +29,16 @@ parser code {:
             return s;
         }
 
-        public ArrayList<String> getBoardList(){
-            return boardList;
-        }
-
-        public ArrayList<String> getBoxesList(){
-            return boxesList;
-        }
-
-        public ArrayList<String> getTargetsList(){
-            return targetsList;
-        }
-
-        public ArrayList<String> getPlayerPos(){
-            return playerPos;
-        }
-
-        public ArrayList<String> getConfigList(){
-            return configList;
-        }
-
-        public ArrayList<String> getValueList(){
-            return valueList;
+        public ArrayList<String> getTokenList(){
+            return tokenList;
         }
 
         public ArrayList<String> getErrorList(){
             return errorList;
+        }
+
+        public HashMap<String, String> getPairList(){
+            return pairList;
         }
 :}
 
@@ -98,6 +74,7 @@ precedence nonassoc LPAREN, RPAREN;
 start with map;
 
 map ::= LBRACE element RBRACE                           {: :}
+    | error LBRACE element RBRACE                       {: :} 
     ;
 
 element ::= pair_list                                   {: :}
@@ -105,26 +82,26 @@ element ::= pair_list                                   {: :}
         | array                                         {: :}
         ;
 
-object ::= CONFIG COLON LBRACE pair_list RBRACE         {: clavesList.add( new Manejador(e.getLexeme(), 1)); :}
-        | PLAYER COLON LBRACE pair_list RBRACE          {: :}
+object ::= CONFIG:e COLON LBRACE pair_list RBRACE         {: tokenList.add(String.valueOf(e)); :}
+        | PLAYER:e COLON LBRACE pair_list RBRACE          {: tokenList.add(String.valueOf(e)); :}
         ;
 
 pair_list ::= pair                                      {: :}
            | pair COMMA pair_list                       {: :}
             ;
 
-pair ::= reserved_words COLON value                     {: :}
+pair ::= reserved_words:r COLON value:v                     {: pairList.put(String.valueOf(r), String.valueOf(r)); :}
        ;
 
-array ::= BOARD COLON LBRACKET array_list RBRACKET       {: :}
-        | BOXES COLON LBRACKET array_list RBRACKET       {: :}
-        | TARGETS COLON LBRACKET array_list RBRACKET     {: :}
+array ::= BOARD:e COLON LBRACKET array_list RBRACKET       {: tokenList.add(String.valueOf(e)); :}
+        | BOXES:e COLON LBRACKET array_list RBRACKET       {: tokenList.add(String.valueOf(e)); :}
+        | TARGETS:e COLON LBRACKET array_list RBRACKET     {: tokenList.add(String.valueOf(e)); :}
         ;
 
 array_list ::= LBRACE pair_list RBRACE                   {: :}
             | LBRACE pair_list RBRACE COMMA array_list   {: :}
             ;
-
+/*
 expr ::= term                                           {: :}
         | expr PLUS term                                {: :}
         | expr MINUS term                               {: :}
@@ -140,29 +117,45 @@ factor ::= DIGIT                                        {: :}
         | DECIMAL                                       {: :}
         | LPAREN expr RPAREN                            {: :}
         ;
+*/
 
-op ::= FLOOR LPAREN expr RPAREN                         {: :}
-    | CEIL LPAREN expr RPAREN                           {: :}
+expresion_block ::= expr
+                ;
+
+expr  ::= expr:e1 PLUS expr:e2                                  {: Result = String.valueOf(new Integer(Integer.valueOf(e1) + Integer.valueOf(e2))); :}
+        | expr:e1 MINUS expr:e2                                 {: Result = String.valueOf(new Integer(Integer.valueOf(e1) - Integer.valueOf(e2))); :}
+        | expr:e1 TIMES expr:e2                                 {: Result = String.valueOf(new Integer(Integer.valueOf(e1) * Integer.valueOf(e2))); :}
+        | expr:e1 DIVIDE expr:e2                                {: Result = String.valueOf(new Integer(Integer.valueOf(e1) / Integer.valueOf(e2))); :}
+        | MINUS expr:e1                                         {: Result = String.valueOf(new Integer(-Integer.valueOf(e1)); :}
+        | LPAREN expr:e1 RPAREN                                 {: Result = e; :}  
+	    | NUMBER:e                                              {: Result = e; :}  
+        | DECIMAL:e                                             {: Result = e; :}                                  
+        | op:e                                                  {: Result = e; :}
+	    ;
+
+
+op ::= FLOOR:f LPAREN expr:e RPAREN                         {:  :}
+    | CEIL:c LPAREN expr:e RPAREN                           {:  :}
     ;
 
-value ::= IDENTIFIER                                    {: :}
-        | HEXADECIMAL                                   {: :}
-        | expr                                          {: :}
-        | BRICK                                         {: :}
-        | HALL                                          {: :}
+value ::= IDENTIFIER:e                                    {: Result = e; :}
+        | HEXADECIMAL:e                                   {: Result = e; :}
+        | expresion_block:e                               {: Result = e; :}
+        | BRICK:e                                         {: Result = e; :}
+        | HALL:e                                          {: Result = e; :}
         ;
 
-reserved_words ::= NAME                                 {: :}
-                | ROWS                                  {: :}
-                | COLS                                  {: :}
-                | BRICK_COLOR                           {: :}
-                | BOX_COLOR                             {: :}
-                | BOX_ON_TARGET_COLOR                   {: :}
-                | TARGET_COLOR                          {: :}
-                | HALL_COLOR                            {: :}
-                | UNDEFINED_COLOR                       {: :}
-                | PLAYER_COLOR                          {: :}
-                | POSX                                  {: :}
-                | POSY                                  {: :}
-                | TYPE                                  {: :}
+reserved_words ::= NAME:e                                 {: Result = e; :}
+                | ROWS:e                                  {: Result = e; :}
+                | COLS:e                                  {: Result = e; :}
+                | BRICK_COLOR:e                           {: Result = e; :}
+                | BOX_COLOR:e                             {: Result = e; :}
+                | BOX_ON_TARGET_COLOR:e                   {: Result = e; :}
+                | TARGET_COLOR:e                          {: Result = e; :}
+                | HALL_COLOR:e                            {: Result = e; :}
+                | UNDEFINED_COLOR:e                       {: Result = e; :}
+                | PLAYER_COLOR:e                          {: Result = e; :}
+                | POSX:e                                  {: Result = e; :}
+                | POSY:e                                  {: Result = e; :}
+                | TYPE:e                                  {: Result = e; :}
                 ;

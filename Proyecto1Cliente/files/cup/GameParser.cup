@@ -1,0 +1,92 @@
+package main.java.compiler.model;
+import java.util.*;
+import java_cup.runtime.*;
+import dmaldonado.server.model.*;
+
+parser code {:
+    private ArrayList<String> errorList;
+    private ArrayList<String> tokenList;
+
+        public Parser(Lexer lex){
+            super(lex);
+            this.errorList = new ArrayList();
+            this.tokenList = new ArrayList();
+        }
+
+        @Override
+        public void syntax_error(Symbol symbol){
+            Token token = (Token) symbol.value;
+            report_error("Se encontro un error con el token: "+token.getLexeme()+" en la linea: "+token.getLine()+" en la columna: "+token.getColumn());
+
+            System.out.println(report_error("Se encontro un error con el token: "+token.getLexeme()+" en la linea: "+token.getLine()+" en la columna: "+token.getColumn()));
+
+            errorList.add(String.format(report_error("Se encontro un error con el token: "+token.getLexeme()+" en la linea: "+token.getLine()+" en la columna: "+token.getColumn())));
+        }
+
+        private String report_error(String s) {
+            return s;
+        }
+
+        public ArrayList<String> getTokenList(){
+            return tokenList;
+        }
+
+        public ArrayList<String> getErrorList(){
+            return errorList;
+        }
+:}
+
+terminal UP, DOWN, LEFT, RIGHT, PUSH, CEIL;
+terminal HASH, FLOOR, LPAREN, RPAREN, SEMICOLON;
+terminal DIGIT, DECIMAL, PLUS, DIV, MINUS, MULT, STRING;
+terminal ERROR;
+
+non terminal game;
+non terminal reserved_words;
+non terminal movement;
+non terminal expr;
+non terminal expr_list;
+non terminal op;
+non terminal comment;
+
+precedence left PLUS, MINUS;
+precedence left DIV, MULT;
+precedence left FLOOR, CEIL;
+precedence nonassoc LPAREN, RPAREN;
+
+start with game;
+
+game ::=  movement
+        | comment
+        ;
+
+movement ::= reserved_words expr_list SEMICOLON
+            | PUSH reserved_words expr_list SEMICOLON
+            ;
+
+comment ::= HASH STRING HASH
+        ;
+
+reserved_words ::=  UP
+                |   DOWN
+                |   LEFT
+                |   RIGHT
+                ;
+
+expr_list ::= LPAREN expr RPAREN
+            ;
+
+expr  ::= expr:e1 PLUS expr:e2                                  {: tokenList.add(String.valueOf(e)); :}
+        | expr:e1 MINUS expr:e2                                 {: tokenList.add(String.valueOf(e)); :}  
+        | expr:e1 MULT expr:e2                                 {: tokenList.add(String.valueOf(e)); :}
+        | expr:e1 DIV expr:e2                                {: tokenList.add(String.valueOf(e)); :} 
+        | LPAREN expr:e1 RPAREN                                {: tokenList.add(String.valueOf(e)); :}  
+        | MINUS expr                                            {: tokenList.add(String.valueOf(e)); :}
+	    | DIGIT:e                                              {: tokenList.add(String.valueOf(e)); :}  
+        | DECIMAL:e                                             {: tokenList.add(String.valueOf(e)); :}                                  
+        | op:e
+	    ;
+
+op ::= FLOOR:e LPAREN expr RPAREN                         {: tokenList.add(String.valueOf(e)); :}
+    | CEIL:e LPAREN expr RPAREN                           {: tokenList.add(String.valueOf(e)); :}
+    ;
