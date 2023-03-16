@@ -3,16 +3,16 @@ import java.util.*;
 import java_cup.runtime.*;
 import dmaldonado.server.model.*;
 
+class ServerParser;
+
 parser code {:
     private ArrayList<String> errorList;
-    private ArrayList<String> tokenList;
-    private HashMap<String, String> pairList;
+    private ArrayList<Token> tokenList;
 
-        public Parser(Lexer lex){
+        public ServerParser(ServerLexer lex){
             super(lex);
             this.errorList = new ArrayList();
             this.tokenList = new ArrayList();
-            this.pairList = new HashMap<String, String>();
         }
 
         @Override
@@ -29,7 +29,7 @@ parser code {:
             return s;
         }
 
-        public ArrayList<String> getTokenList(){
+        public ArrayList<Token> getTokenList(){
             return tokenList;
         }
 
@@ -37,20 +37,47 @@ parser code {:
             return errorList;
         }
 
-        public HashMap<String, String> getPairList(){
-            return pairList;
-        }
 :}
 
-terminal NAME, ROWS, COLS, CONFIG, TYPE;
-terminal BOX_COLOR, BOX_ON_TARGET_COLOR, TARGET_COLOR, BRICK_COLOR, HALL_COLOR;
-terminal UNDEFINED_COLOR, PLAYER_COLOR;
-terminal BOARD, POSX, POSY, BOXES, TARGETS, PLAYER;
-terminal FLOOR, CEIL, BRICK, HALL;
-terminal LBRACE, RBRACE, COLON, COMMA, LBRACKET, RBRACKET;
-terminal LPAREN, RPAREN, PLUS, DIV, MINUS, MULT, QUOTATION;
-terminal DIGIT, IDENTIFIER, HEXADECIMAL, DECIMAL;
-terminal ERROR;
+terminal Token NAME;
+terminal Token ROWS;
+terminal Token COLS;
+terminal Token CONFIG;
+terminal Token TYPE;
+terminal Token BOX_COLOR;
+terminal Token BOX_ON_TARGET_COLOR;
+terminal Token TARGET_COLOR;
+terminal Token BRICK_COLOR;
+terminal Token HALL_COLOR;
+terminal Token UNDEFINED_COLOR;
+terminal Token PLAYER_COLOR;
+terminal Token BOARD; 
+terminal Token POSX; 
+terminal Token POSY;
+terminal Token BOXES;
+terminal Token TARGETS;
+terminal Token PLAYER;
+terminal Token FLOOR;
+terminal Token CEIL;
+terminal Token BRICK; 
+terminal Token HALL;
+terminal Token LBRACE;
+terminal Token RBRACE;
+terminal Token COLON;
+terminal Token COMMA;
+terminal Token LBRACKET;
+terminal Token RBRACKET;
+terminal Token LPAREN;
+terminal Token RPAREN; 
+terminal Token PLUS;
+terminal Token DIV;
+terminal Token MINUS;
+terminal Token MULT;
+terminal Token DIGIT;
+terminal Token IDENTIFIER; 
+terminal Token HEXADECIMAL;
+terminal Token DECIMAL;
+terminal Token ERROR;
 
 non terminal map;
 non terminal element;
@@ -59,11 +86,10 @@ non terminal pair_list;
 non terminal pair;
 non terminal array;
 non terminal value;
-non terminal expr;
-non terminal term;
-non terminal factor;
+non terminal Integer expresion_block;
+non terminal Double expr;
 non terminal reserved_words;
-non terminal op;
+non terminal Double op;
 non terminal array_list;
 
 precedence left PLUS, MINUS;
@@ -82,80 +108,68 @@ element ::= pair_list                                   {: :}
         | array                                         {: :}
         ;
 
-object ::= CONFIG:e COLON LBRACE pair_list RBRACE         {: tokenList.add(String.valueOf(e)); :}
-        | PLAYER:e COLON LBRACE pair_list RBRACE          {: tokenList.add(String.valueOf(e)); :}
+object ::= CONFIG:e COLON LBRACE pair_list RBRACE         {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+        | PLAYER:e COLON LBRACE pair_list RBRACE          {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
         ;
 
 pair_list ::= pair                                      {: :}
            | pair COMMA pair_list                       {: :}
-            ;
+           | ERROR pair_list                            {: :}
+           ;
 
-pair ::= reserved_words:r COLON value:v                     {: pairList.put(String.valueOf(r), String.valueOf(r)); :}
+pair ::= reserved_words COLON value                     {:  :}
        ;
 
-array ::= BOARD:e COLON LBRACKET array_list RBRACKET       {: tokenList.add(String.valueOf(e)); :}
-        | BOXES:e COLON LBRACKET array_list RBRACKET       {: tokenList.add(String.valueOf(e)); :}
-        | TARGETS:e COLON LBRACKET array_list RBRACKET     {: tokenList.add(String.valueOf(e)); :}
+array ::= BOARD:e COLON LBRACKET array_list RBRACKET       {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+        | BOXES:e COLON LBRACKET array_list RBRACKET       {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+        | TARGETS:e COLON LBRACKET array_list RBRACKET     {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
         ;
 
 array_list ::= LBRACE pair_list RBRACE                   {: :}
             | LBRACE pair_list RBRACE COMMA array_list   {: :}
+            | ERROR array_list                           {: :}
             ;
-/*
-expr ::= term                                           {: :}
-        | expr PLUS term                                {: :}
-        | expr MINUS term                               {: :}
-        ;
 
-term ::= factor                                         {: :}
-        | term MULT factor                              {: :}
-        | term DIV factor                               {: :}
-        ;
-
-factor ::= DIGIT                                        {: :}
-        | op                                            {: :}
-        | DECIMAL                                       {: :}
-        | LPAREN expr RPAREN                            {: :}
-        ;
-*/
-
-expresion_block ::= expr
+expresion_block ::= expr:e                                {: RESULT = e.intValue(); :}             
                 ;
 
-expr  ::= expr:e1 PLUS expr:e2                                  {: Result = String.valueOf(new Integer(Integer.valueOf(e1) + Integer.valueOf(e2))); :}
-        | expr:e1 MINUS expr:e2                                 {: Result = String.valueOf(new Integer(Integer.valueOf(e1) - Integer.valueOf(e2))); :}
-        | expr:e1 TIMES expr:e2                                 {: Result = String.valueOf(new Integer(Integer.valueOf(e1) * Integer.valueOf(e2))); :}
-        | expr:e1 DIVIDE expr:e2                                {: Result = String.valueOf(new Integer(Integer.valueOf(e1) / Integer.valueOf(e2))); :}
-        | MINUS expr:e1                                         {: Result = String.valueOf(new Integer(-Integer.valueOf(e1)); :}
-        | LPAREN expr:e1 RPAREN                                 {: Result = e; :}  
-	    | NUMBER:e                                              {: Result = e; :}  
-        | DECIMAL:e                                             {: Result = e; :}                                  
-        | op:e                                                  {: Result = e; :}
+expr  ::= expr:e1 PLUS expr:e2                                  {: RESULT = e1 + e2; :}
+        | expr:e1 MINUS expr:e2                                 {: RESULT = e1 - e2; :}
+        | expr:e1 MULT expr:e2                                  {: RESULT = e1 * e2; :}
+        | expr:e1 DIV expr:e2                                   {: RESULT = e1 / e2; :}
+        | MINUS expr:e1                                         {: RESULT = -e1; :}
+        | LPAREN expr:e1 RPAREN                                 {: RESULT = e1; :}  
+	    | DIGIT:e                                               {: RESULT = Double.valueOf(e.getLexeme()); :}  
+        | DECIMAL:e                                             {: RESULT = Double.valueOf(e.getLexeme()); :}                                  
+        | op:e                                                  {: RESULT = e; :}
 	    ;
 
 
-op ::= FLOOR:f LPAREN expr:e RPAREN                         {:  :}
-    | CEIL:c LPAREN expr:e RPAREN                           {:  :}
+op ::= FLOOR:f LPAREN expr:e RPAREN                         {: RESULT = Math.floor(e); :}  
+    | CEIL:c LPAREN expr:e RPAREN                           {: RESULT = Math.ceil(e); :}                                                          
     ;
 
-value ::= IDENTIFIER:e                                    {: Result = e; :}
-        | HEXADECIMAL:e                                   {: Result = e; :}
-        | expresion_block:e                               {: Result = e; :}
-        | BRICK:e                                         {: Result = e; :}
-        | HALL:e                                          {: Result = e; :}
+value ::= IDENTIFIER:e                                    {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+        | HEXADECIMAL:e                                   {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+        | expresion_block:e                               {: 
+                                                          Token expresionToken = new Token(String.valueOf(e));
+                                                          tokenList.add(expresionToken);
+                                                          :}
+        | BRICK:e                                         {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+        | HALL:e                                          {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
         ;
 
-reserved_words ::= NAME:e                                 {: Result = e; :}
-                | ROWS:e                                  {: Result = e; :}
-                | COLS:e                                  {: Result = e; :}
-                | BRICK_COLOR:e                           {: Result = e; :}
-                | BOX_COLOR:e                             {: Result = e; :}
-                | BOX_ON_TARGET_COLOR:e                   {: Result = e; :}
-                | TARGET_COLOR:e                          {: Result = e; :}
-                | HALL_COLOR:e                            {: Result = e; :}
-                | UNDEFINED_COLOR:e                       {: Result = e; :}
-                | PLAYER_COLOR:e                          {: Result = e; :}
-                | POSX:e                                  {: Result = e; :}
-                | POSY:e                                  {: Result = e; :}
-                | TYPE:e                                  {: Result = e; :}
+reserved_words ::= NAME:e                                 {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                | ROWS:e                                  {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                | COLS:e                                  {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                | BRICK_COLOR:e                           {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                | BOX_COLOR:e                             {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                | BOX_ON_TARGET_COLOR:e                   {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                | TARGET_COLOR:e                          {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                | HALL_COLOR:e                            {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                | UNDEFINED_COLOR:e                       {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                | PLAYER_COLOR:e                          {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                | POSX:e                                  {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                | POSY:e                                  {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                | TYPE:e                                  {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
                 ;

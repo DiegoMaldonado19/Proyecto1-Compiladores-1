@@ -19,6 +19,10 @@ public class Token {
         this.column = column;
     }
 
+    public Token(String lexeme) {
+        this.lexeme = lexeme;
+    }
+
     public String getLexeme() {
         return lexeme;
     }

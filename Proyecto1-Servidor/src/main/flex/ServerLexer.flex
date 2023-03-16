@@ -19,11 +19,11 @@ import dmaldonado.server.model.*;
     private ArrayList<String>  errorList;  
 
     private Symbol symbol(int type, Object value) {
-        return new Symbol(type, new Token(value.toString(), type, yyline + 1, yycolumn + 1));
+        return new Symbol(type, new Token(value.toString(), yyline + 1, yycolumn + 1));
     }
 
     private Symbol symbol(int type) {
-        return new Symbol(type, new Token(null, type, yyline + 1, yycolumn + 1));
+        return new Symbol(type, new Token(null, yyline + 1, yycolumn + 1));
     }
 
     private void error(String lexeme){
@@ -99,59 +99,55 @@ quotation = \"
 
 <YYINITIAL>{
     {whitespace}        {/*ignore*/}
-    {quotation}                 {   yybegin(QUOTATION_MARK);
-                                    return symbol(sym.QUOTATION, yytext());
-                                }
-    {lbrace}                    { return symbol(sym.LBRACE, yytext()); }
-    {rbrace}                    { return symbol(sym.RBRACE, yytext()); }
-    {colon}                     { return symbol(sym.COLON, yytext()); }
-    {comma}                     { return symbol(sym.COMMA, yytext()); }
-    {lbracket}                  { return symbol(sym.LBRACKET, yytext()); }
-    {rbracket}                  { return symbol(sym.RBRACKET, yytext()); }
-    {lparen}                    { return symbol(sym.LPAREN, yytext()); }
-    {rparen}                    { return symbol(sym.RPAREN, yytext()); }
-    {digit}                     { return symbol(sym.DIGIT, yytext()); } 
+    {quotation}                 {   yybegin(QUOTATION_MARK); }
+    {lbrace}                    { return symbol(ServerParserSym.LBRACE, yytext()); }
+    {rbrace}                    { return symbol(ServerParserSym.RBRACE, yytext()); }
+    {colon}                     { return symbol(ServerParserSym.COLON, yytext()); }
+    {comma}                     { return symbol(ServerParserSym.COMMA, yytext()); }
+    {lbracket}                  { return symbol(ServerParserSym.LBRACKET, yytext()); }
+    {rbracket}                  { return symbol(ServerParserSym.RBRACKET, yytext()); }
+    {lparen}                    { return symbol(ServerParserSym.LPAREN, yytext()); }
+    {rparen}                    { return symbol(ServerParserSym.RPAREN, yytext()); }
+    {digit}                     { return symbol(ServerParserSym.DIGIT, yytext()); } 
 }
 
 <QUOTATION_MARK>{
-    {quotation}         {   yybegin(YYINITIAL);
-                            return symbol(sym.QUOTATION, yytext());
-                        }
+    {quotation}         {   yybegin(YYINITIAL); }
     {whitespace}        {/*ignore*/}
-    {name}                      { return symbol(sym.NAME, yytext()); }
-    {rows}                      { return symbol(sym.ROWS, yytext()); }
-    {cols}                      { return symbol(sym.COLS, yytext()); }
-    {config}                    { return symbol(sym.CONFIG, yytext()); }
-    {box_color}                 { return symbol(sym.BOX_COLOR, yytext()); }
-    {box_on_target_color}       { return symbol(sym.BOX_ON_TARGET_COLOR, yytext()); }
-    {target_color}              { return symbol(sym.TARGET_COLOR, yytext()); }
-    {brick_color}               { return symbol(sym.BRICK_COLOR, yytext()); }
-    {hall_color}                { return symbol(sym.HALL_COLOR, yytext()); }
-    {undefined_color}           { return symbol(sym.UNDEFINED_COLOR, yytext()); }
-    {player_color}              { return symbol(sym.PLAYER_COLOR, yytext()); }
-    {board}                     { return symbol(sym.BOARD, yytext()); }
-    {posX}                      { return symbol(sym.POSX, yytext()); }
-    {posY}                      { return symbol(sym.POSY, yytext()); }
-    {type}                      { return symbol(sym.TYPE, yytext()); }
-    {boxes}                     { return symbol(sym.BOXES, yytext()); }
-    {floor}                     { return symbol(sym.FLOOR, yytext()); }
-    {ceil}                      { return symbol(sym.CEIL, yytext()); }    
-    {targets}                   { return symbol(sym.TARGETS, yytext()); }
-    {player}                    { return symbol(sym.PLAYER, yytext()); }
-    {brick}                     { return symbol(sym.BRICK, yytext()); }
-    {hall}                      { return symbol(sym.HALL, yytext()); }                
-    {identifier}                { return symbol(sym.IDENTIFIER, yytext()); }
-    {hexadecimal}               { return symbol(sym.HEXADECIMAL, yytext()); }
-    {digit}                     { return symbol(sym.DIGIT, yytext()); }
-    {decimal}                   { return symbol(sym.DECIMAL, yytext()); }
-    {plus}                      { return symbol(sym.PLUS, yytext()); }
-    {div}                       { return symbol(sym.DIV, yytext()); }
-    {minus}                     { return symbol(sym.MINUS, yytext()); }
-    {mult}                      { return symbol(sym.MULT, yytext()); }
+    {name}                      { return symbol(ServerParserSym.NAME, yytext()); }
+    {rows}                      { return symbol(ServerParserSym.ROWS, yytext()); }
+    {cols}                      { return symbol(ServerParserSym.COLS, yytext()); }
+    {config}                    { return symbol(ServerParserSym.CONFIG, yytext()); }
+    {box_color}                 { return symbol(ServerParserSym.BOX_COLOR, yytext()); }
+    {box_on_target_color}       { return symbol(ServerParserSym.BOX_ON_TARGET_COLOR, yytext()); }
+    {target_color}              { return symbol(ServerParserSym.TARGET_COLOR, yytext()); }
+    {brick_color}               { return symbol(ServerParserSym.BRICK_COLOR, yytext()); }
+    {hall_color}                { return symbol(ServerParserSym.HALL_COLOR, yytext()); }
+    {undefined_color}           { return symbol(ServerParserSym.UNDEFINED_COLOR, yytext()); }
+    {player_color}              { return symbol(ServerParserSym.PLAYER_COLOR, yytext()); }
+    {board}                     { return symbol(ServerParserSym.BOARD, yytext()); }
+    {posX}                      { return symbol(ServerParserSym.POSX, yytext()); }
+    {posY}                      { return symbol(ServerParserSym.POSY, yytext()); }
+    {type}                      { return symbol(ServerParserSym.TYPE, yytext()); }
+    {boxes}                     { return symbol(ServerParserSym.BOXES, yytext()); }
+    {floor}                     { return symbol(ServerParserSym.FLOOR, yytext()); }
+    {ceil}                      { return symbol(ServerParserSym.CEIL, yytext()); }    
+    {targets}                   { return symbol(ServerParserSym.TARGETS, yytext()); }
+    {player}                    { return symbol(ServerParserSym.PLAYER, yytext()); }
+    {brick}                     { return symbol(ServerParserSym.BRICK, yytext()); }
+    {hall}                      { return symbol(ServerParserSym.HALL, yytext()); }                
+    {identifier}                { return symbol(ServerParserSym.IDENTIFIER, yytext()); }
+    {hexadecimal}               { return symbol(ServerParserSym.HEXADECIMAL, yytext()); }
+    {digit}                     { return symbol(ServerParserSym.DIGIT, yytext()); }
+    {decimal}                   { return symbol(ServerParserSym.DECIMAL, yytext()); }
+    {plus}                      { return symbol(ServerParserSym.PLUS, yytext()); }
+    {div}                       { return symbol(ServerParserSym.DIV, yytext()); }
+    {minus}                     { return symbol(ServerParserSym.MINUS, yytext()); }
+    {mult}                      { return symbol(ServerParserSym.MULT, yytext()); }
 }
 
-[^]   { error(yytext()); return symbol(sym.ERROR, yytext());}
+[^]   { error(yytext()); return symbol(ServerParserSym.ERROR, yytext());}
 
 
-<<EOF>>         { return symbol(sym.EOF); }   
+<<EOF>>         { return symbol(ServerParserSym.EOF); }   
 
