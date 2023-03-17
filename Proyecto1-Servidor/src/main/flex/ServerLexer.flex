@@ -7,6 +7,7 @@ import dmaldonado.server.model.*;
 
 %%
 
+%public
 %class ServerLexer
 %unicode
 %line

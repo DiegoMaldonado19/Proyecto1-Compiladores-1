@@ -11,7 +11,7 @@ import com.dmaldonado.cliente.model.*;
 
 // See https://github.com/jflex-de/jflex/issues/222
 @SuppressWarnings("FallThrough")
-class GameLexer implements java_cup.runtime.Scanner {
+public class GameLexer implements java_cup.runtime.Scanner {
 
   /** This character denotes the end of file. */
   public static final int YYEOF = -1;
@@ -326,7 +326,7 @@ class GameLexer implements java_cup.runtime.Scanner {
    *
    * @param   in  the java.io.Reader to read input from.
    */
-  GameLexer(java.io.Reader in) {
+  public GameLexer(java.io.Reader in) {
       errorList = new ArrayList();    
     this.zzReader = in;
   }

@@ -6,6 +6,7 @@ import com.dmaldonado.cliente.model.*;
 
 %%
 
+%public
 %class GameLexer
 %unicode
 %line

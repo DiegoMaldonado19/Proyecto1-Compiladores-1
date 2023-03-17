@@ -5,6 +5,9 @@
 
 package dmaldonado.server;
 
+import dmaldonado.server.view.*;
+import dmaldonado.server.socket.*;
+
 /**
  *
  * @author ACER
@@ -12,6 +15,8 @@ package dmaldonado.server;
 public class Proyecto1Servidor{
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        ServerFrame view = new ServerFrame();
+        Listener listener = new Listener(9090, view);
+        listener.start();
     }
 }

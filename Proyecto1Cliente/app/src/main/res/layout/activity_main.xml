@@ -7,12 +7,43 @@
     tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/textView"
+        android:layout_width="85dp"
+        android:layout_height="24dp"
+        android:text="PROYECTO 1"
+        tools:layout_editor_absoluteX="145dp"
+        tools:layout_editor_absoluteY="73dp" />
+
+    <TextView
+        android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:text="Organizacion de Lenguajes y Compiladores I"
+        tools:layout_editor_absoluteX="67dp"
+        tools:layout_editor_absoluteY="119dp" />
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="409dp"
+        android:layout_height="313dp"
+        tools:layout_editor_absoluteX="1dp"
+        tools:layout_editor_absoluteY="196dp">
+
+        <Button
+            android:id="@+id/sentToServerButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Enviar"
+            tools:layout_editor_absoluteX="160dp"
+            tools:layout_editor_absoluteY="224dp" />
+
+        <EditText
+            android:id="@+id/inputText"
+            android:layout_width="373dp"
+            android:layout_height="172dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="Escribe tus instrucciones"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="25dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

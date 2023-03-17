@@ -12,7 +12,7 @@ import dmaldonado.server.model.*;
 
 // See https://github.com/jflex-de/jflex/issues/222
 @SuppressWarnings("FallThrough")
-class ServerLexer implements java_cup.runtime.Scanner {
+public class ServerLexer implements java_cup.runtime.Scanner {
 
   /** This character denotes the end of file. */
   public static final int YYEOF = -1;
@@ -441,7 +441,7 @@ class ServerLexer implements java_cup.runtime.Scanner {
    *
    * @param   in  the java.io.Reader to read input from.
    */
-  ServerLexer(java.io.Reader in) {
+  public ServerLexer(java.io.Reader in) {
       errorList = new ArrayList();    
     this.zzReader = in;
   }
