@@ -100,7 +100,7 @@ precedence nonassoc LPAREN, RPAREN;
 start with map;
 
 map ::= LBRACE element RBRACE                           {: :}
-    | ERROR:e map   {: syntax_error(e); :}
+    | ERROR map   {: :}
     ;
 
 element ::= pair_list                                   {: :}
@@ -110,12 +110,12 @@ element ::= pair_list                                   {: :}
 
 object ::= CONFIG:e COLON LBRACE pair_list RBRACE         {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
         | PLAYER:e COLON LBRACE pair_list RBRACE          {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
-        | ERROR:e object                                  {: syntax_error(e); :}
+        | ERROR object                                  {: :}
         ;
 
 pair_list ::= pair                                      {: :}
            | pair COMMA pair_list                       {: :}
-           | ERROR:e pair_list                            {: syntax_error(e); :}
+           | ERROR pair_list                            {: :}
            ;
 
 pair ::= reserved_words COLON value                     {:  :}
@@ -128,11 +128,11 @@ array ::= BOARD:e COLON LBRACKET array_list RBRACKET       {: tokenList.add( new
 
 array_list ::= LBRACE pair_list RBRACE                   {: :}
             | LBRACE pair_list RBRACE COMMA array_list   {: :}
-            | ERROR:e array_list                           {: syntax_error(e); :}
+            | ERROR array_list                           {: :}
             ;
 
 expresion_block ::= expr:e                                {: RESULT = e.intValue(); :} 
-                | ERROR:e expresion_block                 {: syntax_error(e); :}            
+                | ERROR expresion_block                 {: :}            
                 ;
 
 expr  ::= expr:e1 PLUS expr:e2                                  {: RESULT = e1 + e2; :}
@@ -141,7 +141,7 @@ expr  ::= expr:e1 PLUS expr:e2                                  {: RESULT = e1 +
         | expr:e1 DIV expr:e2                                   {: RESULT = e1 / e2; :}
         | MINUS expr:e1                                         {: RESULT = -e1; :}
         | LPAREN expr:e1 RPAREN                                 {: RESULT = e1; :}  
-	    | DIGIT:e                                               {: RESULT = Double.valueOf(e.getLexeme()); :}  
+	| DIGIT:e                                               {: RESULT = Double.valueOf(e.getLexeme()); :}  
         | DECIMAL:e                                             {: RESULT = Double.valueOf(e.getLexeme()); :}                                  
         | op:e                                                  {: RESULT = e; :}
 	    ;
