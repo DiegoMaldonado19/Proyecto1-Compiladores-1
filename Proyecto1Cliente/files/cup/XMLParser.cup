@@ -1,0 +1,126 @@
+package main.java.compiler.model;
+import java.util.*;
+import java_cup.runtime.*;
+import dmaldonado.server.model.*;
+
+class XMLParser;
+
+parser code {:
+    private ArrayList<String> errorList;
+    private ArrayList<Token> tokenList;
+
+        public GameParser(GameLexer lex){
+            super(lex);
+            this.errorList = new ArrayList();
+            this.tokenList = new ArrayList();
+        }
+
+        @Override
+        public void syntax_error(Symbol symbol){
+            Token token = (Token) symbol.value;
+            report_error("Se encontro un error con el token: "+token.getLexeme()+" en la linea: "+token.getLine()+" en la columna: "+token.getColumn());
+
+            System.out.println(report_error("Se encontro un error con el token: "+token.getLexeme()+" en la linea: "+token.getLine()+" en la columna: "+token.getColumn()));
+
+            errorList.add(String.format(report_error("Se encontro un error con el token: "+token.getLexeme()+" en la linea: "+token.getLine()+" en la columna: "+token.getColumn())));
+        }
+
+        private String report_error(String s) {
+            return s;
+        }
+
+        public ArrayList<Token> getTokenList(){
+            return tokenList;
+        }
+
+        public ArrayList<String> getErrorList(){
+            return errorList;
+        }
+:}
+
+terminal Token NAME;
+terminal Token ROWS;
+terminal Token COLS;
+terminal Token CONFIG;
+terminal Token TYPE;
+terminal Token BOX_COLOR;
+terminal Token BOX_ON_TARGET_COLOR;
+terminal Token TARGET_COLOR;
+terminal Token BRICK_COLOR;
+terminal Token HALL_COLOR;
+terminal Token UNDEFINED_COLOR;
+terminal Token PLAYER_COLOR;
+terminal Token BOARD; 
+terminal Token POSX; 
+terminal Token POSY;
+terminal Token BOXES;
+terminal Token TARGETS;
+terminal Token PLAYER;
+terminal Token BRICK; 
+terminal Token HALL;
+terminal Token GREATER_THAN;
+terminal Token LESS_THAN;
+terminal Token SLASH;
+terminal Token QUESTION;
+terminal Token PROLOG;
+terminal Token DIGIT;
+terminal Token STRING;
+terminal Token HEXADECIMAL;
+terminal ERROR;
+
+non terminal xml;
+non terminal open_tag;
+non terminal element;
+non terminal closed_tag;
+non terminal tag;
+non terminal value;
+non terminal reserved_words;
+non terminal prolog;
+
+start with xml;
+
+xml ::= element;
+
+tag ::= prolog open_tag value closed_tag    {: :}
+    | open_tag value closed_tag {: :}
+     ;
+
+prolog ::= LESS_THAN QUESTION PROLOG:e QUESTION GREATER_THAN  {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+        | ERROR:e prolog {: syntax_error(e); :}
+        ;
+
+open_tag ::= LESS_THAN reserved_words GREATER_THAN {: :}
+        | ERROR:e open_tag {: syntax_error(e); :}
+         ;
+
+closed_tag ::= LESS_THAN SLASH reserved_words GREATER_THAN {: :}
+            | ERROR:e open_tag {: syntax_error(e); :}
+            ;
+
+value ::= DIGIT:e                                {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+        | STRING:e                              {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+        | HEXADECIMAL:e                          {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+        | BRICK:e                                {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+        | HALL:e                                 {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+        ;
+
+reserved_words ::= NAME:e                                 {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                | ROWS:e                                  {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                | COLS:e                                  {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                | BRICK_COLOR:e                           {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                | BOX_COLOR:e                             {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                | BOX_ON_TARGET_COLOR:e                   {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                | TARGET_COLOR:e                          {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                | HALL_COLOR:e                            {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                | UNDEFINED_COLOR:e                       {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                | PLAYER_COLOR:e                          {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                | POSX:e                                  {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                | POSY:e                                  {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                | TYPE:e                                  {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                | BOXES:e                                 {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                | PLAYER:e                                {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                | CONFIG:e                                {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                | TARGETS:e                               {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                | BOARD:e                                 {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                | TYPE:e                                  {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                ;

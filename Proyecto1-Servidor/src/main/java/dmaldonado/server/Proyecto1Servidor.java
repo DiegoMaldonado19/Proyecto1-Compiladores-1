@@ -9,7 +9,7 @@ package dmaldonado.server;
  *
  * @author ACER
  */
-public class Proyecto1Servidor {
+public class Proyecto1Servidor{
 
     public static void main(String[] args) {
         System.out.println("Hello World!");

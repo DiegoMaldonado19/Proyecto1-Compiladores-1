@@ -6,7 +6,7 @@ import dmaldonado.server.model.*;
 
 %%
 
-%class ServerLexer
+%class GameLexer
 %unicode
 %line
 %column
@@ -48,7 +48,7 @@ newline = [\n]
 
 digit = [0-9]+
 decimal = [0-9]+[.][0-9]+
-string = /*[a-zA-Z0-9_]*/
+string = ([a-zA-Z0-9_]|{whitespace})+
 
 /* Palabras reservadas */
 
@@ -78,37 +78,37 @@ hash = "#"
 <YYINITIAL>{
     {whitespace}     {/*IGNORE*/}
     {hash}           { yybegin(COMMENT);
-                       return symbol(sym.HASH, yytext());
+                       return symbol(GameParserSym.HASH, yytext());
                      }
-    {up}             { return symbol(sym.UP, yytext()); }
-    {down}           { return symbol(sym.DOWN, yytext()); }
-    {left}           { return symbol(sym.LEFT, yytext()); }
-    {right}          { return symbol(sym.RIGHT, yytext()); }
-    {push}           { return symbol(sym.PUSH, yytext()); }
-    {floor}          { return symbol(sym.FLOOR, yytext()); }
-    {ceil}           { return symbol(sym.CEIL, yytext()); }    
-    {lparen}         { return symbol(sym.LPAREN, yytext()); }
-    {rparen}         { return symbol(sym.RPAREN, yytext()); }
-    {semicolon}      { return symbol(sym.SEMICOLON, yytext()); }
-    {digit}          { return symbol(sym.DIGIT, yytext()); }
-    {decimal}        { return symbol(sym.DECIMAL, yytext()); }
-    {plus}           { return symbol(sym.PLUS, yytext()); }
-    {div}            { return symbol(sym.DIV, yytext()); }
-    {minus}          { return symbol(sym.MINUS, yytext()); }
-    {mult}           { return symbol(sym.MULT, yytext()); }
+    {up}             { return symbol(GameParserSym.UP, yytext()); }
+    {down}           { return symbol(GameParserSym.DOWN, yytext()); }
+    {left}           { return symbol(GameParserSym.LEFT, yytext()); }
+    {right}          { return symbol(GameParserSym.RIGHT, yytext()); }
+    {push}           { return symbol(GameParserSym.PUSH, yytext()); }
+    {floor}          { return symbol(GameParserSym.FLOOR, yytext()); }
+    {ceil}           { return symbol(GameParserSym.CEIL, yytext()); }    
+    {lparen}         { return symbol(GameParserSym.LPAREN, yytext()); }
+    {rparen}         { return symbol(GameParserSym.RPAREN, yytext()); }
+    {semicolon}      { return symbol(GameParserSym.SEMICOLON, yytext()); }
+    {digit}          { return symbol(GameParserSym.DIGIT, yytext()); }
+    {decimal}        { return symbol(GameParserSym.DECIMAL, yytext()); }
+    {plus}           { return symbol(GameParserSym.PLUS, yytext()); }
+    {div}            { return symbol(GameParserSym.DIV, yytext()); }
+    {minus}          { return symbol(GameParserSym.MINUS, yytext()); }
+    {mult}           { return symbol(GameParserSym.MULT, yytext()); }
 }
 
 <COMMENT>{
     {hash}           {  yybegin(YYINITIAL);
-                        return symbol(sym.HASH, yytext());
+                        return symbol(GameParserSym.HASH, yytext());
                      }
 
-    {string}     { return symbol(sym.STRING, yytext()); }
+    {string}     { return symbol(GameParserSym.STRING, yytext()); }
 
     {whitespace}     {/*IGNORE*/}
 }
 
-[^]   { error(yytext()); return symbol(sym.ERROR, yytext());}
+[^]   { error(yytext()); return symbol(GameParserSym.ERROR, yytext());}
 
 
-<<EOF>>         { return symbol(sym.EOF); }   
+<<EOF>>         { return symbol(GameParserSym.EOF); }   

@@ -3,11 +3,13 @@ import java.util.*;
 import java_cup.runtime.*;
 import dmaldonado.server.model.*;
 
+class GameParser;
+
 parser code {:
     private ArrayList<String> errorList;
-    private ArrayList<String> tokenList;
+    private ArrayList<Token> tokenList;
 
-        public Parser(Lexer lex){
+        public GameParser(GameLexer lex){
             super(lex);
             this.errorList = new ArrayList();
             this.tokenList = new ArrayList();
@@ -27,7 +29,7 @@ parser code {:
             return s;
         }
 
-        public ArrayList<String> getTokenList(){
+        public ArrayList<Token> getTokenList(){
             return tokenList;
         }
 
@@ -36,18 +38,33 @@ parser code {:
         }
 :}
 
-terminal UP, DOWN, LEFT, RIGHT, PUSH, CEIL;
-terminal HASH, FLOOR, LPAREN, RPAREN, SEMICOLON;
-terminal DIGIT, DECIMAL, PLUS, DIV, MINUS, MULT, STRING;
+terminal Token UP;
+terminal Token DOWN;
+terminal Token LEFT;
+terminal Token RIGHT;
+terminal Token PUSH;
+terminal Token CEIL;
+terminal Token HASH;
+terminal Token FLOOR;
+terminal Token LPAREN;
+terminal Token RPAREN;
+terminal Token SEMICOLON;
+terminal Token DIGIT;
+terminal Token DECIMAL;
+terminal Token PLUS;
+terminal Token DIV;
+terminal Token MINUS;
+terminal Token MULT;
+terminal Token STRING;
 terminal ERROR;
 
 non terminal game;
 non terminal reserved_words;
 non terminal movement;
-non terminal expr;
-non terminal expr_list;
-non terminal op;
 non terminal comment;
+non terminal Integer expresion_block;
+non terminal Double expr;
+non terminal Double op;
 
 precedence left PLUS, MINUS;
 precedence left DIV, MULT;
@@ -60,33 +77,36 @@ game ::=  movement
         | comment
         ;
 
-movement ::= reserved_words expr_list SEMICOLON
-            | PUSH reserved_words expr_list SEMICOLON
+movement ::= reserved_words expresion_block SEMICOLON
+            | PUSH:e reserved_words expresion_block SEMICOLON  {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+            | ERROR:e movement                           {: syntax_error(e); :}
             ;
 
-comment ::= HASH STRING HASH
+comment ::= HASH STRING:e HASH                 {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
         ;
 
-reserved_words ::=  UP
-                |   DOWN
-                |   LEFT
-                |   RIGHT
+reserved_words ::=  UP:e                     {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                |   DOWN:e                   {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                |   LEFT:e                   {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
+                |   RIGHT:e                  {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
                 ;
 
-expr_list ::= LPAREN expr RPAREN
-            ;
+expresion_block ::= LPAREN expr RPAREN                               {: RESULT = e.intValue(); :}
+                | ERROR:e1 expresion_block                         {: syntax_error(e); :}
+                ;
 
-expr  ::= expr:e1 PLUS expr:e2                                  {: tokenList.add(String.valueOf(e)); :}
-        | expr:e1 MINUS expr:e2                                 {: tokenList.add(String.valueOf(e)); :}  
-        | expr:e1 MULT expr:e2                                 {: tokenList.add(String.valueOf(e)); :}
-        | expr:e1 DIV expr:e2                                {: tokenList.add(String.valueOf(e)); :} 
-        | LPAREN expr:e1 RPAREN                                {: tokenList.add(String.valueOf(e)); :}  
-        | MINUS expr                                            {: tokenList.add(String.valueOf(e)); :}
-	    | DIGIT:e                                              {: tokenList.add(String.valueOf(e)); :}  
-        | DECIMAL:e                                             {: tokenList.add(String.valueOf(e)); :}                                  
-        | op:e
+expr  ::= expr:e1 PLUS expr:e2                                  {: RESULT = e1 + e2; :}
+        | expr:e1 MINUS expr:e2                                 {: RESULT = e1 - e2; :}
+        | expr:e1 MULT expr:e2                                  {: RESULT = e1 * e2; :}
+        | expr:e1 DIV expr:e2                                   {: RESULT = e1 / e2; :}
+        | MINUS expr:e1                                         {: RESULT = -e1; :}
+        | LPAREN expr:e1 RPAREN                                 {: RESULT = e1; :}  
+	    | DIGIT:e                                               {: RESULT = Double.valueOf(e.getLexeme()); :}  
+        | DECIMAL:e                                             {: RESULT = Double.valueOf(e.getLexeme()); :}                                  
+        | op:e                                                  {: RESULT = e; :}
 	    ;
 
-op ::= FLOOR:e LPAREN expr RPAREN                         {: tokenList.add(String.valueOf(e)); :}
-    | CEIL:e LPAREN expr RPAREN                           {: tokenList.add(String.valueOf(e)); :}
+
+op ::= FLOOR LPAREN expr:e RPAREN                         {: RESULT = Math.floor(e); :}  
+    | CEIL LPAREN expr:e RPAREN                           {: RESULT = Math.ceil(e); :}                                                          
     ;
