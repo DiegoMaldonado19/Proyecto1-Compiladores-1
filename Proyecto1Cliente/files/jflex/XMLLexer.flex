@@ -1,8 +1,8 @@
-package main.java.compiler.model;
+package com.dmaldonado.cliente.compiler;
 
 import java_cup.runtime.Symbol;
 import java.util.*;
-import dmaldonado.server.model.*;
+import com.dmaldonado.cliente.model.*;
 
 %%
 
@@ -18,11 +18,11 @@ import dmaldonado.server.model.*;
     private ArrayList<String>  errorList;  
 
     private Symbol symbol(int type, Object value) {
-        return new Symbol(type, new Token(value.toString(), type, yyline + 1, yycolumn + 1));
+        return new Symbol(type, new Token(value.toString(), yyline + 1, yycolumn + 1));
     }
 
     private Symbol symbol(int type) {
-        return new Symbol(type, new Token(null, type, yyline + 1, yycolumn + 1));
+        return new Symbol(type, new Token(null, yyline + 1, yycolumn + 1));
     }
 
     private void error(String lexeme){
@@ -83,44 +83,44 @@ question = "?"
 %%
 
 <YYINITIAL>{
-    {name}                              { return symbol(XLMParserSym.NAME, yytext()); }
-    {rows}                              { return symbol(XLMParserSym.ROWS, yytext()); }
-    {cols}                              { return symbol(XLMParserSym.COLS, yytext()); }
-    {config}                            { return symbol(XLMParserSym.CONFIG, yytext()); }
-    {box_color}                         { return symbol(XLMParserSym.BOX_COLOR, yytext()); }
-    {box_on_target_color}               { return symbol(XLMParserSym.BOX_ON_TARGET_COLOR, yytext()); }
-    {target_color}                      { return symbol(XLMParserSym.TARGET_COLOR, yytext()); }
-    {brick_color}                       { return symbol(XLMParserSym.BRICK_COLOR, yytext()); }
-    {hall_color}                        { return symbol(XLMParserSym.HALL, yytext()); }
-    {undefined_color}                   { return symbol(XLMParserSym.UNDEFINED_COLOR, yytext()); }
-    {player_color}                      { return symbol(XLMParserSym.PLAYER_COLOR, yytext()); }
-    {board}                             { return symbol(XLMParserSym.BOARD, yytext()); }
-    {posX}                              { return symbol(XLMParserSym.POSX, yytext()); }
-    {posY}                              { return symbol(XLMParserSym.POSY, yytext()); }
-    {type}                              { return symbol(XLMParserSym.TYPE, yytext()); }
-    {boxes}                             { return symbol(XLMParserSym.BOXES, yytext()); }
-    {targets}                           { return symbol(XLMParserSym.TARGETS, yytext()); }
-    {player}                            { return symbol(XLMParserSym.PLAYER, yytext()); }
-    {brick}                             { return symbol(XLMParserSym.BRICK, yytext()); }
-    {hall}                              { return symbol(XLMParserSym.HALL, yytext()); }
+    {name}                              { return symbol(XMLParserSym.NAME, yytext()); }
+    {rows}                              { return symbol(XMLParserSym.ROWS, yytext()); }
+    {cols}                              { return symbol(XMLParserSym.COLS, yytext()); }
+    {config}                            { return symbol(XMLParserSym.CONFIG, yytext()); }
+    {box_color}                         { return symbol(XMLParserSym.BOX_COLOR, yytext()); }
+    {box_on_target_color}               { return symbol(XMLParserSym.BOX_ON_TARGET_COLOR, yytext()); }
+    {target_color}                      { return symbol(XMLParserSym.TARGET_COLOR, yytext()); }
+    {brick_color}                       { return symbol(XMLParserSym.BRICK_COLOR, yytext()); }
+    {hall_color}                        { return symbol(XMLParserSym.HALL, yytext()); }
+    {undefined_color}                   { return symbol(XMLParserSym.UNDEFINED_COLOR, yytext()); }
+    {player_color}                      { return symbol(XMLParserSym.PLAYER_COLOR, yytext()); }
+    {board}                             { return symbol(XMLParserSym.BOARD, yytext()); }
+    {posX}                              { return symbol(XMLParserSym.POSX, yytext()); }
+    {posY}                              { return symbol(XMLParserSym.POSY, yytext()); }
+    {type}                              { return symbol(XMLParserSym.TYPE, yytext()); }
+    {boxes}                             { return symbol(XMLParserSym.BOXES, yytext()); }
+    {targets}                           { return symbol(XMLParserSym.TARGETS, yytext()); }
+    {player}                            { return symbol(XMLParserSym.PLAYER, yytext()); }
+    {brick}                             { return symbol(XMLParserSym.BRICK, yytext()); }
+    {hall}                              { return symbol(XMLParserSym.HALL, yytext()); }
 
-    {greater_than}                      { return symbol(XLMParserSym.GREATER_THAN, yytext()); }
-    {less_than}                         { return symbol(XLMParserSym.LESS_THAN, yytext()); }
-    {slash}                             { return symbol(XLMParserSym.SLASH, yytext()); }
+    {greater_than}                      { return symbol(XMLParserSym.GREATER_THAN, yytext()); }
+    {less_than}                         { return symbol(XMLParserSym.LESS_THAN, yytext()); }
+    {slash}                             { return symbol(XMLParserSym.SLASH, yytext()); }
 
-    {digit}                             { return symbol(XLMParserSym.DIGIT, yytext()); }
-    {string}                            { return symbol(XLMParserSym.STRING, yytext()); }
-    {hexadecimal}                       { return symbol(XLMParserSym.HEXADECIMAL, yytext()); }
-    {question}                          { yybegin(TAG); }
+    {digit}                             { return symbol(XMLParserSym.DIGIT, yytext()); }
+    {string}                            { return symbol(XMLParserSym.STRING, yytext()); }
+    {hexadecimal}                       { return symbol(XMLParserSym.HEXADECIMAL, yytext()); }
+    {question}                          { yybegin(PROLOG); }
 
 }
 
 <PROLOG>{
     {question}                          { yybegin(YYINITIAL); }
-    {prolog}                            { return symbol(XLMParserSym.PROLOG, yytext()); }
+    {prolog}                            { return symbol(XMLParserSym.PROLOG, yytext()); }
 }
 
 
-[^]   { error(yytext()); return symbol(GameParserSym.ERROR, yytext());}
+[^]   { error(yytext()); return symbol(XMLParserSym.ERROR, yytext());}
 
-<<EOF>>         { return symbol(GameParserSym.EOF); }   
+<<EOF>>         { return symbol(XMLParserSym.EOF); }   

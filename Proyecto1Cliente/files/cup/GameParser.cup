@@ -1,7 +1,7 @@
-package main.java.compiler.model;
+package com.dmaldonado.cliente.compiler;
 import java.util.*;
 import java_cup.runtime.*;
-import dmaldonado.server.model.*;
+import com.dmaldonado.cliente.model.*;
 
 class GameParser;
 
@@ -79,7 +79,7 @@ game ::=  movement
 
 movement ::= reserved_words expresion_block SEMICOLON
             | PUSH:e reserved_words expresion_block SEMICOLON  {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
-            | ERROR:e movement                           {: syntax_error(e); :}
+            | ERROR movement                           {: :}
             ;
 
 comment ::= HASH STRING:e HASH                 {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
@@ -91,8 +91,8 @@ reserved_words ::=  UP:e                     {: tokenList.add( new Token(e.getLe
                 |   RIGHT:e                  {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
                 ;
 
-expresion_block ::= LPAREN expr RPAREN                               {: RESULT = e.intValue(); :}
-                | ERROR:e1 expresion_block                         {: syntax_error(e); :}
+expresion_block ::= LPAREN expr:e RPAREN                               {: RESULT = e.intValue(); :}
+                | ERROR expresion_block                         {: :}
                 ;
 
 expr  ::= expr:e1 PLUS expr:e2                                  {: RESULT = e1 + e2; :}

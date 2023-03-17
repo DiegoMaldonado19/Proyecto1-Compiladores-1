@@ -1,8 +1,8 @@
-package main.java.compiler.model;
+package com.dmaldonado.cliente.compiler;
 
 import java_cup.runtime.Symbol;
 import java.util.*;
-import dmaldonado.server.model.*;
+import com.dmaldonado.cliente.model.*;
 
 %%
 
@@ -18,11 +18,11 @@ import dmaldonado.server.model.*;
     private ArrayList<String>  errorList;  
 
     private Symbol symbol(int type, Object value) {
-        return new Symbol(type, new Token(value.toString(), type, yyline + 1, yycolumn + 1));
+        return new Symbol(type, new Token(value.toString(), yyline + 1, yycolumn + 1));
     }
 
     private Symbol symbol(int type) {
-        return new Symbol(type, new Token(null, type, yyline + 1, yycolumn + 1));
+        return new Symbol(type, new Token(null, yyline + 1, yycolumn + 1));
     }
 
     private void error(String lexeme){

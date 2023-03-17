@@ -1,6 +1,6 @@
 package com.dmaldonado.cliente.model
 
-class Token (private var lexeme: String, private var row: Int, private var column: Int){
+class Token (private var lexeme: String, private var line: Int, private var column: Int){
 
     fun setLexeme(lexeme: String){
         this.lexeme = lexeme
@@ -10,12 +10,12 @@ class Token (private var lexeme: String, private var row: Int, private var colum
         return lexeme
     }
 
-    fun setRow(row: Int){
-        this.row = row
+    fun setLine(line: Int){
+        this.line = line
     }
 
-    fun getRow(): Int{
-        return row
+    fun getLine(): Int{
+        return line
     }
 
     fun setColumn(column: Int){
@@ -27,6 +27,6 @@ class Token (private var lexeme: String, private var row: Int, private var colum
     }
 
     override fun toString(): String {
-        return "Token(lexeme='$lexeme', row=$row, column=$column)"
+        return "Token(lexeme='$lexeme', row=$line, column=$column)"
     }
 }

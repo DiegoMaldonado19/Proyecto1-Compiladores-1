@@ -1,7 +1,7 @@
-package main.java.compiler.model;
+package com.dmaldonado.cliente.compiler;
 import java.util.*;
 import java_cup.runtime.*;
-import dmaldonado.server.model.*;
+import com.dmaldonado.cliente.model.*;
 
 class XMLParser;
 
@@ -9,7 +9,7 @@ parser code {:
     private ArrayList<String> errorList;
     private ArrayList<Token> tokenList;
 
-        public GameParser(GameLexer lex){
+        public XMLParser(GameLexer lex){
             super(lex);
             this.errorList = new ArrayList();
             this.tokenList = new ArrayList();
@@ -86,15 +86,15 @@ tag ::= prolog open_tag value closed_tag    {: :}
      ;
 
 prolog ::= LESS_THAN QUESTION PROLOG:e QUESTION GREATER_THAN  {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
-        | ERROR:e prolog {: syntax_error(e); :}
+        | ERROR prolog {:  :}
         ;
 
 open_tag ::= LESS_THAN reserved_words GREATER_THAN {: :}
-        | ERROR:e open_tag {: syntax_error(e); :}
+        | ERROR open_tag {:  :}
          ;
 
 closed_tag ::= LESS_THAN SLASH reserved_words GREATER_THAN {: :}
-            | ERROR:e open_tag {: syntax_error(e); :}
+            | ERROR open_tag {: :}
             ;
 
 value ::= DIGIT:e                                {: tokenList.add( new Token(e.getLexeme(), e.getLine(), e.getColumn())); :}
