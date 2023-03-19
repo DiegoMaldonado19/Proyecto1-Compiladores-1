@@ -60,14 +60,12 @@ public class Listener extends Thread{
 
 
                 // TODO: write your code here
-                /*
                 // TODO: write another message
                 Message response = new Message("Hello from server: " + LocalDateTime.now());
                 System.out.println("\nSending message:");
                 System.out.println(response);
 
                 outputStream.writeObject(response);
-                */
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace(System.out);
